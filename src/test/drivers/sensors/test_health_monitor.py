@@ -16,9 +16,15 @@ class TestHealthMonitor(unittest.TestCase):
 
 
     def test_read_cpu_temp(self):
-        for param in self.config:
-            if param['type'] is 'shell':
-                print(param)
+        read_cpu_temp_command = {'key': 'cpu_temp_0', 'type': 'shell', 'command': ['cat', '/sys/class/thermal/thermal_zone0/temp']}
+        key = read_cpu_temp_command['key']
+        command = read_cpu_temp_command['command']
+        cpu_temp = self.hm._exec_shell(key, command)
+        actual_cpu_temp = 0
+        with open(command[1], 'r') as cpu_temp_file:
+            actual_cpu_temp = {key:cpu_temp_file.read()}
+        self.assertEqual(cpu_temp, actual_cpu_temp)
+
 
 
 if __name__ == '__main__':
