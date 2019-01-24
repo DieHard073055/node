@@ -17,5 +17,5 @@ class HealthMonitor():
     def _exec_shell(self, key, commands):
         value = None
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
-        value = { key : process.communicate()[0] }
+        value = { key : process.communicate()[0].decode('utf-8') }
         return value
