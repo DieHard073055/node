@@ -31,6 +31,13 @@ class TestHealthMonitor(unittest.TestCase):
             actual_meminfo = {read_meminfo['key']: memfile.read()}
         self.assertEqual(meminfo, actual_meminfo)
 
+    def testResolveCommand_typeShellPIPE(self):
+        request = self.config[1]
+        memavailable = self.hm.resolve_request(request)
+        self.assertEqual(True, False)
+
+        
+
 
 
 if __name__ == '__main__':
