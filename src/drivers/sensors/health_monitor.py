@@ -19,3 +19,10 @@ class HealthMonitor():
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
         value = { key : process.communicate()[0].decode('utf-8') }
         return value
+
+    def resolve_request(self, request):
+        if request['type'] == 'shell':
+            return self._exec_shell(request['key'], request['command'])
+        else:
+            return None
+        
