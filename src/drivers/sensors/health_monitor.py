@@ -20,9 +20,18 @@ class HealthMonitor():
         value = { key : process.communicate()[0].decode('utf-8') }
         return value
 
+    def _read_file(self, key, commands):
+        value = None
+        for command in commands:
+            with open( command, 'r') as cfile:
+                value = { key: cfile.read() }
+        return value
+
     def resolve_request(self, request):
         if request['type'] == 'shell':
             return self._exec_shell(request['key'], request['command'])
+        elif request['type'] == 'read':
+            return self._read_file(request['key'], request['command'])
         else:
             return None
         
