@@ -16,15 +16,17 @@ class HealthMonitor():
 
     def _exec_shell(self, key, commands):
         value = None
-        process = subprocess.Popen(commands, stdout=subprocess.PIPE)
+        process = subprocess.Popen(' '.join(commands), shell=True, stdout=subprocess.PIPE)
         value = { key : process.communicate()[0].decode('utf-8') }
         return value
 
     def _read_file(self, key, commands):
-        value = None
+        value = []
+        index=0 
         for command in commands:
             with open( command, 'r') as cfile:
-                value = { key: cfile.read() }
+                value = { '{}_{}'.format(key, index): cfile.read() }
+                index+=1
         return value
 
     def resolve_request(self, request):
