@@ -44,7 +44,7 @@
 						"operation":"sub",
 						"keys":[
 							"memory_total",
-							"memory_free"
+							"memory_available"
 						]
 					}
 				}
