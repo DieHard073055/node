@@ -23,7 +23,10 @@ SAMPLE_CONFIG = {
 						"/proc/meminfo",
 						"|",
 						"grep",
-						"'MemAvailable'"
+						"'MemAvailable'",
+                                                "|",
+                                                "awk",
+                                                "'{print $2}'"
 					]
 				},
 				{
@@ -34,7 +37,10 @@ SAMPLE_CONFIG = {
 						"/proc/meminfo",
 						"|",
 						"grep",
-						"'MemTotal'"
+						"'MemTotal'",
+                                                "|",
+                                                "awk",
+                                                "'{print $2}'"
 					]
 				},
 				{
