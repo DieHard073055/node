@@ -2,6 +2,9 @@
 import unittest
 import unittest.mock
 import node
+import sys
+
+sys.path.pop(0) # remove the path for the test directory
 
 '''
  mock for the config manager class
@@ -34,6 +37,7 @@ class TestNodeModuleImporter(unittest.TestCase):
         self.config = {
             "drivers":[
                 {
+                    "name":"HealthMonitor",
                     "module":health_monitor,
                     "params":config_params
                 }
@@ -43,6 +47,7 @@ class TestNodeModuleImporter(unittest.TestCase):
         self.non_existent_config = {
             "drivers":[
                 {
+                    "name":"nonExistent",
                     "module":"non_existent.non_existent",
                     "params":config_params
                 }
@@ -50,14 +55,19 @@ class TestNodeModuleImporter(unittest.TestCase):
 
         }
 
-    def testImportModule_HealthMonitor(self):
+    def testImportDriver_HealthMonitor(self):
+        drivers = []
         for driver in self.config['drivers']:
-            node.initialize_modules(driver)
+            drivers.append(node.initialize_driver(driver))
+        self.assertEqual(type(drivers[0]).__name__, self.config['drivers'][0]['name'])
 
 
-    def testImportModule_NonExistantModule(self):
+    def testImportDriver_NonExistantModule(self):
+        drivers = []
         for driver in self.non_existent_config['drivers']:
-            node.initialize_modules(driver)
+            driver.append(node.initialize_driver(driver))
+        self.assertIsNone(driver[0])
+
 
 if  __name__ == '__main__':
     unittest.main()
