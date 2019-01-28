@@ -1,4 +1,5 @@
-""" Provides a generic interface to monitor various types of health merics. Can be configured via the config parameters which is passed into this module."""
+""" Provides a generic interface to monitor various types of health merics. Can be configured via
+the config parameters which is passed into this module."""
 
 __author__ = 'Eshan Shafeeq'
 
@@ -17,7 +18,7 @@ class HealthMonitor():
     def _exec_shell(self, key, commands):
         value = None
         process = subprocess.Popen(' '.join(commands), shell=True, stdout=subprocess.PIPE)
-        value = { key : process.communicate()[0].decode('utf-8') }
+        value = { key : process.communicate()[0].decode('utf-8').rstrip() }
         return value
 
     def _read_file(self, key, commands):
@@ -25,7 +26,7 @@ class HealthMonitor():
         index=0 
         for command in commands:
             with open( command, 'r') as cfile:
-                value = { '{}_{}'.format(key, index): cfile.read() }
+                value = { '{}_{}'.format(key, index): cfile.read().rstrip() }
                 index+=1
         return value
 
