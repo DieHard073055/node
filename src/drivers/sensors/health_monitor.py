@@ -4,8 +4,9 @@ the config parameters which is passed into this module."""
 __author__ = 'Eshan Shafeeq'
 
 import subprocess
+from drivers.sensors import sensor_base
 
-class HealthMonitor():
+class HealthMonitor(sensor_base.SensorBase):
     '''
         this class will obtain all the health metrics
         defined in the param section of the config
@@ -23,7 +24,7 @@ class HealthMonitor():
 
     def _read_file(self, key, commands):
         value = []
-        index=0 
+        index=0
         for command in commands:
             with open( command, 'r') as cfile:
                 value = { '{}_{}'.format(key, index): cfile.read().rstrip() }
@@ -37,4 +38,16 @@ class HealthMonitor():
             return self._read_file(request['key'], request['command'])
         else:
             return None
-        
+
+    def setup(self):
+        self.values = None
+
+    def loop(self):
+
+        for request in self.config_params:
+            if not self.values:
+                self.values = []
+            self.values.append(self.resolve_request(request))
+
+    def get_values(self):
+        return self.values
