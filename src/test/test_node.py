@@ -65,8 +65,8 @@ class TestNodeModuleImporter(unittest.TestCase):
     def testImportDriver_NonExistantModule(self):
         drivers = []
         for driver in self.non_existent_config['drivers']:
-            driver.append(node.initialize_driver(driver))
-        self.assertIsNone(driver[0])
+            drivers.append(node.initialize_driver(driver))
+        self.assertIsNone(drivers[0])
 
 
 if  __name__ == '__main__':
