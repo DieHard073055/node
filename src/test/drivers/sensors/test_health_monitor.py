@@ -6,13 +6,13 @@ import unittest
 from drivers.sensors import health_monitor
 
 
-class TestHealthMonitor(unittest.TestCase):
-    """All the unit tests which reflects the requirements for health_monitor"""
+class TestHealthMonitorResolveRequests(unittest.TestCase):
+    """Unittests to evaluate the responses for the requests"""
 
     def setUp(self):
         self.health_monitor = health_monitor.HealthMonitor({})
 
-    def testResolveCommand_typeShell(self):
+    def testResolveRequest_typeShell(self):
         actual_temp_file = '/sys/class/thermal/thermal_zone0/temp'
         tmp_temp_file = './cpu_temp'
         request = {
@@ -33,7 +33,7 @@ class TestHealthMonitor(unittest.TestCase):
         cpu_temp = self.health_monitor.resolve_request(request)
         self.assertEqual(cpu_temp, actual_cpu_temp)
 
-    def testResolveCommand_typeRead(self):
+    def testResolveRequest_typeRead(self):
         actual_mem_file = '/proc/meminfo'
         tmp_mem_file = './memfile'
         request = {
@@ -52,7 +52,7 @@ class TestHealthMonitor(unittest.TestCase):
         meminfo = self.health_monitor.resolve_request(request)
         self.assertEqual(meminfo, actual_meminfo)
 
-    def testResolveCommand_typeShellPIPE(self):
+    def testResolveRequest_typeShellPIPE(self):
         actual_mem_file = '/proc/meminfo'
         tmp_mem_file = './memfile'
         request = {
@@ -82,7 +82,6 @@ class TestHealthMonitor(unittest.TestCase):
             ][0].split(' ')[3]
             actual_memavailable = {request['key']: actual_memavailable}
         self.assertEqual(memavailable, actual_memavailable)
-
 
 if __name__ == '__main__':
     unittest.main()
