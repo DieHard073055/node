@@ -43,7 +43,6 @@ class HealthMonitor(sensor_base.SensorBase):
         self.values = None
 
     def loop(self):
-
         for request in self.config_params:
             if not self.values:
                 self.values = []
