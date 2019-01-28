@@ -6,6 +6,17 @@
         reports node health metrics to the server
 """
 from utils import config_manager
+import importlib
+
+def initialize_driver(driver_data):
+    try:
+        module = importlib.import_module(driver_data['module'])
+        driver = getattr(module, driver_data['name'])
+        return driver(driver_data['params'])
+    except ModuleNotFoundError as e:
+        # Todo: log the exception
+        return None
+
 
 def main():
     # check if device has been registered
