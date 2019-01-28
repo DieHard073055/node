@@ -10,7 +10,7 @@ class TestHealthMonitorResolveRequests(unittest.TestCase):
     """Unittests to evaluate the responses for the requests"""
 
     def setUp(self):
-        self.health_monitor = health_monitor.HealthMonitor({})
+        self.health_monitor = health_monitor.HealthMonitor([])
 
     def testResolveRequest_typeShell(self):
         actual_temp_file = '/sys/class/thermal/thermal_zone0/temp'
@@ -82,6 +82,29 @@ class TestHealthMonitorResolveRequests(unittest.TestCase):
             ][0].split(' ')[3]
             actual_memavailable = {request['key']: actual_memavailable}
         self.assertEqual(memavailable, actual_memavailable)
+
+class TestHealthMonitorImplementation(unittest.TestCase):
+    def setUp(self):
+        self.health_monitor = health_monitor.HealthMonitor([])
+        self.health_monitor_cputemp = health_monitor.HealthMonitor([
+            {
+                'key': 'cpu_temp_0',
+                'type': 'shell',
+                'command': ['cat', '/sys/class/thermal/thermal_zone0/temp']
+            }
+        ])
+
+    def testLoop_emptyConfigParams(self):
+        self.health_monitor.loop()
+
+    def testLoop_getCPUTempRequest(self):
+        self.health_monitor_cputemp.loop()
+
+    def testGetValues_emptyConfigParams(self):
+        self.health_monitor.get_values()
+
+    def testGetValues_getCPUTempRequest(self):
+        self.health_monitor_cputemp.get_values()
 
 if __name__ == '__main__':
     unittest.main()
