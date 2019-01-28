@@ -86,25 +86,26 @@ class TestHealthMonitorResolveRequests(unittest.TestCase):
 class TestHealthMonitorImplementation(unittest.TestCase):
     def setUp(self):
         self.health_monitor = health_monitor.HealthMonitor([])
+        self.health_monitor_cputemp_key = 'cpu_temp_0'
         self.health_monitor_cputemp = health_monitor.HealthMonitor([
             {
-                'key': 'cpu_temp_0',
+                'key': self.health_monitor_cputemp_key,
                 'type': 'shell',
                 'command': ['cat', '/sys/class/thermal/thermal_zone0/temp']
             }
         ])
-
-    def testLoop_emptyConfigParams(self):
-        self.health_monitor.loop()
-
-    def testLoop_getCPUTempRequest(self):
-        self.health_monitor_cputemp.loop()
+        self.health_monitor.setup()
+        self.health_monitor_cputemp.setup()
 
     def testGetValues_emptyConfigParams(self):
-        self.health_monitor.get_values()
+        self.health_monitor.loop()
+        self.assertEqual(self.health_monitor.get_values(), None)
 
     def testGetValues_getCPUTempRequest(self):
-        self.health_monitor_cputemp.get_values()
+        self.health_monitor_cputemp.loop()
+        result = self.health_monitor_cputemp.get_values()[0]
+        self.assertIn(self.health_monitor_cputemp_key, result)
+        self.assertIsNotNone(result[self.health_monitor_cputemp_key])
 
 if __name__ == '__main__':
     unittest.main()
