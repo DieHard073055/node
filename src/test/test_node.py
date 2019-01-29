@@ -1,12 +1,12 @@
 """ tests which dictate the specs for the module node """
+import sys
+sys.path.pop(0) # remove the path for the test directory
+
 import json
 import unittest
 import unittest.mock
 import node
-import sys
-
-
-sys.path.pop(0) # remove the path for the test directory
+from drivers.sensors import sensor_base
 
 '''
  mock for the config manager class
@@ -35,11 +35,21 @@ def mocked_import_module(driver_data):
     exec_methods.append('mocked_import_module')
 
 def mocked_getattr(module_name, class_name):
-    class MockedClass(object):
+    class MockedSensorClass(sensor_base.SensorBase):
         def __init__(self, params):
             exec_methods.append('mocked_driver_initiated')
 
-    return MockedClass
+        def setup(self):
+            exec_methods.append('mocked_driver_setup')
+
+        def loop(self):
+            exec_methods.append('mocked_driver_loop')
+
+        def get_values(self):
+            exec_methods.append('mocked_driver_get_values')
+            raise KeyboardInterrupt('end_driver_test')
+
+    return MockedSensorClass
 
 class TestNodeStartBehaviour(unittest.TestCase):
     @unittest.mock.patch('node.getattr')
@@ -48,8 +58,13 @@ class TestNodeStartBehaviour(unittest.TestCase):
     def testMain_normalOperationConfig(self, import_module, config_manager, get_attr):
         global exec_methods
         expected_exec_methods = [
-            '__init__', 'load_config',
-            'mocked_import_module', 'mocked_driver_initiated'
+            '__init__',
+            'load_config',
+            'mocked_import_module',
+            'mocked_driver_initiated',
+            'mocked_driver_setup',
+            'mocked_driver_loop',
+            'mocked_driver_get_values'
         ]
         import_module.side_effect = mocked_import_module
         config_manager.side_effect = MockConfigManager
