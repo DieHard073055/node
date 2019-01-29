@@ -7,6 +7,9 @@
 """
 from utils import config_manager
 import importlib
+import time
+
+UPDATE_INTERVAL=10
 
 def initialize_driver(driver_data):
     try:
@@ -29,8 +32,33 @@ def main():
     # collect and publish metrics from device drivers
 
     cm = config_manager.ConfigManager()
-    cm.validate_config()
-    cm.save_config()
+    config = cm.load_config()
+    drivers = []
+
+    for driver in config['drivers']:
+        drivers.append(initialize_driver(driver))
+
+    for driver in drivers:
+        driver.setup()
+
+    while True:
+        values = []
+        try:
+            for driver in drivers:
+                driver.loop()
+                values += driver.get_values()
+
+        except KeyboardInterrupt as ki:
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+        values = list(filter(None.__ne__, values))
+
+        # publish values via mqtt
+        print(values)
+        time.sleep(UPDATE_INTERVAL)
 
 if __name__ == '__main__':
     main()
