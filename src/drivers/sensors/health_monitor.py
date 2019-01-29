@@ -49,4 +49,6 @@ class HealthMonitor(sensor_base.SensorBase):
             self.values.append(self.resolve_request(request))
 
     def get_values(self):
-        return self.values
+        values = self.values
+        self.values = []
+        return values
