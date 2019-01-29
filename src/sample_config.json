@@ -5,7 +5,7 @@
 	"drivers":[
 		{
 			"name": "HealthMonitor",
-			"module":"drivers.sensors.health_monitor.HealthMonitor",
+			"module":"drivers.sensors.health_monitor",
 			"params":[
 				{
 					"key":"cpu_temp_0",
@@ -23,7 +23,9 @@
 						"/proc/meminfo",
 						"|",
 						"grep",
-						"'MemAvailable'"
+						"'MemAvailable'",
+						"|",
+						"awk '{print $2}'"
 					]
 				},
 				{
@@ -34,7 +36,9 @@
 						"/proc/meminfo",
 						"|",
 						"grep",
-						"'MemTotal'"
+						"'MemTotal'",
+						"|",
+						"awk '{print $2}'"
 					]
 				},
 				{
