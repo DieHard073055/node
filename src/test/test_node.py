@@ -1,8 +1,10 @@
 """ tests which dictate the specs for the module node """
+import json
 import unittest
 import unittest.mock
 import node
 import sys
+
 
 sys.path.pop(0) # remove the path for the test directory
 
@@ -20,15 +22,40 @@ class MockConfigManager(object):
     def save_config(self):
         global exec_methods
         exec_methods.append('save_config')
+    def load_config(self):
+        global exec_methods
+        exec_methods.append('load_config')
+        config = None
+        with open('sample_config.json') as config_file:
+            config = json.loads(config_file.read())
+        return config
 
+def mocked_import_module(driver_data):
+    global exec_methods
+    exec_methods.append('mocked_import_module')
+
+def mocked_getattr(module_name, class_name):
+    class MockedClass(object):
+        def __init__(self, params):
+            exec_methods.append('mocked_driver_initiated')
+
+    return MockedClass
 
 class TestNodeStartBehaviour(unittest.TestCase):
+    @unittest.mock.patch('node.getattr')
     @unittest.mock.patch('node.config_manager.ConfigManager', autospec = True)
-    def testMain_normalOperation(self, mcm):
+    @unittest.mock.patch('importlib.import_module', autospec = True)
+    def testMain_normalOperationConfig(self, import_module, config_manager, get_attr):
         global exec_methods
-        mcm.side_effect = MockConfigManager
+        expected_exec_methods = [
+            '__init__', 'load_config',
+            'mocked_import_module', 'mocked_driver_initiated'
+        ]
+        import_module.side_effect = mocked_import_module
+        config_manager.side_effect = MockConfigManager
+        get_attr.side_effect = mocked_getattr
         node.main()
-        self.assertListEqual(exec_methods, ['__init__', 'validate_config', 'save_config'])
+        self.assertListEqual(exec_methods, expected_exec_methods)
 
 class TestNodeModuleImporter(unittest.TestCase):
     def setUp(self):
