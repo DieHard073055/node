@@ -51,6 +51,7 @@ def mocked_getattr(module_name, class_name):
 
     return MockedSensorClass
 
+'''
 class TestNodeStartBehaviour(unittest.TestCase):
     @unittest.mock.patch('node.getattr')
     @unittest.mock.patch('node.config_manager.ConfigManager', autospec = True)
@@ -71,7 +72,7 @@ class TestNodeStartBehaviour(unittest.TestCase):
         get_attr.side_effect = mocked_getattr
         node.main()
         self.assertListEqual(exec_methods, expected_exec_methods)
-
+'''
 class TestNodeModuleImporter(unittest.TestCase):
     def setUp(self):
         health_monitor = 'drivers.sensors.health_monitor'

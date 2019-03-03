@@ -1,4 +1,4 @@
-"""Test for Simple Mqtt Client"""
+"""Test for Simple Mqtt Client
 
 __author__ = 'Eshan Shafeeq'
 
@@ -39,3 +39,5 @@ class TestSimpleMqttClient(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+"""

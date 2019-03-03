@@ -6,11 +6,13 @@
         reports node health metrics to the server
 """
 from utils import config_manager
+from comms.mqtt.simple_mqtt_client import SimpleMqttClient
 import importlib
 import time
 
-UPDATE_INTERVAL=10
+UPDATE_INTERVAL=1
 
+mqttc = None
 def initialize_driver(driver_data):
     try:
         module = importlib.import_module(driver_data['module'])
@@ -31,8 +33,16 @@ def main():
     # collect and publish health metrics
     # collect and publish metrics from device drivers
 
+    import ipdb; ipdb.set_trace()
     cm = config_manager.ConfigManager()
     config = cm.load_config()
+    mqttc = SimpleMqttClient(
+        config['device_endpoint'],
+        host=config['comms']['params']['host'],
+        port=config['comms']['params']['port']
+    )
+    mqttc.setup()
+
     drivers = []
 
     for driver in config['drivers']:
